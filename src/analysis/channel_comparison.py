@@ -174,8 +174,10 @@ def main() -> None:
         ("r0", "Scope R0 — initial generations only (heal_0)",
          "Programs flagged on the code as first generated, before any repair."),
         ("any", "Scope ANY — anywhere in the healing chain (heal_0 + heal_N/healed)",
-         f"Programs ever flagged by a channel at any point of the "
-         f"{max_healing_rounds()}-round chain."),
+         "Programs ever flagged by a channel at any point of the RECORDED "
+         "healing chain (every heal_N/healed directory present on disk; NOT "
+         "capped at the configured horizon). For the paper's five-round "
+         "horizon see results/channel_comparison_r05.md."),
     ):
         lines.append(f"## {title}")
         lines.append("")

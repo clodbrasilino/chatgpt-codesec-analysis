@@ -88,14 +88,19 @@ Paired problems: n = 200 (sample-1; horizon = 5 rounds, penalty = 6).
 
 ### DeepSeek V4 Pro — full gate
 
-Base `feedback-static+dynamic-r0-t1.0-p1.0`: n=2922, heal_failed=0. Thinking `feedback-static+dynamic-r1-t1.0-p1.0`: heal_failed=89 > 50 (transient transport failures).
+Base `feedback-static+dynamic-r0-t1.0-p1.0`: n=2922, heal_failed=0. Thinking `feedback-static+dynamic-r1-t1.0-p1.0`: n=600, heal_failed=1.
 
 | arm | programs | detection-free @gen | pass @horizon | clean | not_cleaned | heal_failed |
 |---|---:|---:|---:|---:|---:|---:|
 | base (subset) | 600 | 34.5% | 77.7% | 259 | 134 | 0 |
-| thinking | 600 | 49.2% | 84.7% | 213 | 3 | 89 |
+| thinking | 600 | 49.2% | 90.2% | 246 | 58 | 1 |
 
-**Excluded from paired tests** (validity gate).
+Paired problems: n = 200 (sample-1; horizon = 5 rounds, penalty = 6).
+
+- **McNemar (exact)**: b = 10 (base pass, thinking not), c = 37 (reverse), p = 9.849e-05
+- **Wilcoxon** on penalized rounds-to-clean (n_eff = 133): p = 1.846e-07, effect r = -0.452 (>0 = thinking needs more rounds)
+- **Bootstrap 95% CI** pass-rate difference (thinking − base): [+0.070, +0.200]
+- Sensitivity (all-3-samples bar, both arms): McNemar b = 10, c = 41, p = 1.474e-05; Wilcoxon p = 9.356e-15, r = -0.601; CI [+0.090, +0.220]
 
 ### GPT-5.6 — full gate
 
@@ -131,14 +136,19 @@ Paired problems: n = 200 (sample-1; horizon = 5 rounds, penalty = 6).
 
 ### Kimi K3 — full gate
 
-Base `feedback-static+dynamic-r0-t1.0-p1.0`: n=2922, heal_failed=0. Thinking `feedback-static+dynamic-r1-t1.0-p1.0`: heal_failed=84 > 50 (transient transport failures).
+Base `feedback-static+dynamic-r0-t1.0-p1.0`: n=2922, heal_failed=0. Thinking `feedback-static+dynamic-r1-t1.0-p1.0`: n=600, heal_failed=0.
 
 | arm | programs | detection-free @gen | pass @horizon | clean | not_cleaned | heal_failed |
 |---|---:|---:|---:|---:|---:|---:|
 | base (subset) | 600 | 34.5% | 71.7% | 223 | 170 | 0 |
-| thinking | 600 | 39.7% | 82.8% | 259 | 19 | 84 |
+| thinking | 600 | 39.7% | 90.3% | 304 | 58 | 0 |
 
-**Excluded from paired tests** (validity gate).
+Paired problems: n = 200 (sample-1; horizon = 5 rounds, penalty = 6).
+
+- **McNemar (exact)**: b = 9 (base pass, thinking not), c = 44 (reverse), p = 1.221e-06
+- **Wilcoxon** on penalized rounds-to-clean (n_eff = 136): p = 1.592e-06, effect r = -0.412 (>0 = thinking needs more rounds)
+- **Bootstrap 95% CI** pass-rate difference (thinking − base): [+0.110, +0.245]
+- Sensitivity (all-3-samples bar, both arms): McNemar b = 5, c = 61, p = 2.631e-13; Wilcoxon p = 2.585e-13, r = -0.576; CI [+0.210, +0.350]
 
 ### GLM-5.1 — full gate
 
@@ -163,13 +173,13 @@ Base ledgers filtered to the 200 subset task ids; thinking ledgers cover the sub
 | Model | Config | ok/fail calls | prompt tok | completion tok | reasoning tok | mean s/call | completion tok/program |
 |---|---|---:|---:|---:|---:|---:|---:|
 | DeepSeek V4 Pro | static-only | 1514/2150 vs 1438/2204 | 1,632,987 vs 823,871 | 1,333,615 vs 6,943,572 | 0 vs 6,034,042 | 14.7 vs 87.7 | 11,573 |
-| DeepSeek V4 Pro | full gate | 2389/1275 vs 730/3127 | 2,365,210 vs 570,675 | 1,930,074 vs 3,623,782 | 0 vs 3,167,922 | 11.6 vs 132.6 | 6,040 |
+| DeepSeek V4 Pro | full gate | 2389/1275 vs 877/3133 | 2,365,210 vs 697,023 | 1,930,074 vs 4,229,230 | 0 vs 3,669,985 | 11.6 vs 129.5 | 7,049 |
 | GPT-5.6 | static-only | 2560/144 vs 2020/204 | 2,240,643 vs 1,700,503 | 2,344,087 vs 4,380,503 | 0 vs 2,336,992 | 9.5 vs 46.1 | 7,301 |
 | GPT-5.6 | full gate | 2022/1 vs 1480/4 | 2,230,395 vs 1,708,810 | 1,996,519 vs 3,357,466 | 0 vs 1,742,089 | 11.2 vs 48.5 | 5,596 |
 | Gemini 3.1 Pro | static-only | 1043/4582 vs 1104/542 | 421,612 vs 552,024 | 689,889 vs 855,716 | 0 vs 0 | 17.7 vs 32.3 | 1,426 |
 | Gemini 3.1 Pro | full gate | 793/766 vs 658/698 | 661,837 vs 623,222 | 534,749 vs 530,655 | 0 vs 0 | 16.1 vs 40.3 | 884 |
 | Kimi K3 | static-only | 2759/3643 vs 1601/6620 | 2,353,626 vs 1,253,431 | 2,344,779 vs 4,952,240 | 0 vs 3,532,246 | 18.7 vs 75.1 | 8,254 |
-| Kimi K3 | full gate | 2463/1890 vs 1055/5463 | 2,446,838 vs 1,167,146 | 2,048,854 vs 4,801,632 | 0 vs 3,792,919 | 15.7 vs 166.5 | 8,003 |
+| Kimi K3 | full gate | 2463/1890 vs 1196/5463 | 2,446,838 vs 1,323,074 | 2,048,854 vs 5,391,163 | 0 vs 4,248,700 | 15.7 vs 161.9 | 8,985 |
 | GLM-5.1 | static-only | 2364/2200 vs 1362/3598 | 1,312,273 vs 628,551 | 1,283,128 vs 5,791,207 | 0 vs 5,016,067 | 7.3 vs 63.1 | 9,652 |
 | GLM-5.1 | full gate | 2192/1060 vs 930/2652 | 1,554,105 vs 709,625 | 1,216,159 vs 7,459,974 | 0 vs 6,888,185 | 6.9 vs 117.5 | 12,433 |
 

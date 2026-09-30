@@ -41,6 +41,8 @@ from pathlib import Path
 
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 from src.config import max_healing_rounds
 from src.analysis.grid_paired import (
     _all_samples_per_problem,
@@ -234,7 +236,7 @@ def usage_block() -> list[str]:
             think_man = _load(RESULTS / f"{model}-thinking" / f"{think_slug}.manifest.json")
             if think_man is None:
                 continue
-            pids = tasks_present(think)
+            pids = tasks_present(think_man)
             ub = usage_subset(model, base_slug, pids)
             ut = usage_subset(f"{model}-thinking", think_slug, pids)
             if not ub or not ut or not ub["ok"] or not ut["ok"]:

@@ -21,6 +21,7 @@ Output: figures/venn_channels.pdf and .png in the paper repo.
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -34,7 +35,7 @@ from scipy import ndimage
 REPO = Path(__file__).resolve().parents[2]
 DATA = json.loads((REPO / "results" / "problem_channel_venn.json").read_text())
 OUTDIR = Path("/Users/clodbrasilino/workspaces/zju/fse2027paper/figures")
-OUTDIR.mkdir(exist_ok=True)
+os.makedirs(OUTDIR, exist_ok=True)  # Path.mkdir is brokered and raises EEXIST on existing dirs
 
 N = DATA["N"]
 

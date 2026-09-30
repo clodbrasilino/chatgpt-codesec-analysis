@@ -4,10 +4,16 @@ For each cell we report: model, cell, gate/ablation class, total programs,
 heal_failed total, and the breakdown of those failures by the round at
 which they occurred, split into failures inside the window (rounds 1-5,
 which compromise the five-round analysis) and beyond it.
+
+Additionally, every in-window failed program is classified by its ledger
+error string (ok == false rows carry an `error` field): account-standing
+(provider rejected calls, e.g. "Access denied ... account") vs transport
+(connection failures, disconnects, timeouts, server errors) vs other.
 """
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from collections import Counter, defaultdict
 
@@ -15,6 +21,12 @@ REPO = Path(__file__).resolve().parents[2]
 RES = REPO / "results"
 COLL = REPO / "data" / "collected_code_6"
 CAP = 5
+KEY_RE = re.compile(r"^problem-(\d+)(?:-s(\d+))?$")
+ACCOUNT_PAT = re.compile(r"access denied|account|insufficient|forbidden",
+                         re.I)
+TRANSPORT_PAT = re.compile(r"connection|timed out|timeout|disconnect"
+                           r"|apiconnectionerror|internal server error"
+                           r"|server error|50[23]", re.I)
 
 
 def cell_class(model: str, slug: str) -> str:
@@ -57,6 +69,31 @@ def _tasks_of(slug: str, model: str) -> str:
         return str(c.get("tasks", ""))
     except Exception:
         return ""
+
+
+def classify_error(err: str) -> str:
+    if ACCOUNT_PAT.search(err):
+        return "account-standing"
+    if TRANSPORT_PAT.search(err):
+        return "transport"
+    return "other"
+
+
+def ledger_errors(model: str, slug: str) -> dict[tuple[int, int], list[str]]:
+    """(task_id, round) -> [error strings] over failed ledger rows."""
+    out: dict[tuple[int, int], list[str]] = defaultdict(list)
+    path = RES / model / f"{slug}.usage.jsonl"
+    if not path.is_file():
+        return out
+    with open(path) as f:
+        for line in f:
+            try:
+                e = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if e.get("ok") is not True and e.get("error"):
+                out[(e.get("task_id"), e.get("round"))].append(e["error"])
+    return out
 
 
 def main() -> None:
@@ -120,6 +157,53 @@ def main() -> None:
                  "rounds 1-5; in particular all seven main (static+dynamic, "
                  "full-task) cells are clean inside the window except where "
                  "listed.")
+
+    # ---- failure classification from ledger error strings ----
+    classes = Counter()
+    examples: dict[str, str] = {}
+    for r in rows:
+        led = ledger_errors(r["model"], r["slug"])
+        mf = json.loads((RES / r["model"] / f"{r['slug']}.manifest.json")
+                        .read_text())
+        for base, v in mf.get("outcomes", {}).items():
+            if not (isinstance(v, dict)
+                    and v.get("outcome") == "heal_failed"):
+                continue
+            fr = v.get("rounds_to_clean")
+            if not (isinstance(fr, int) and 1 <= fr <= CAP):
+                continue
+            m = KEY_RE.match(base)
+            if not m:
+                continue
+            task = int(m.group(1))
+            sample = int(m.group(2)) if m.group(2) else None
+            errs = [e for (t, rd), es in led.items() if t == task and rd == fr
+                    for e in es]
+            if sample is not None:
+                keyed = [e for (t, rd), es in led.items() if t == task
+                         and rd == fr for e in es]
+                errs = keyed  # round+task is specific enough; classify all
+            if not errs:
+                cls = "no-ledger-error"
+            else:
+                cls = classify_error(" | ".join(errs))
+            classes[cls] += 1
+            examples.setdefault(cls, errs[0][:160] if errs else "")
+    lines += ["", "## Failure classification (in-window programs, from "
+              "ledger error strings)", "",
+              "Rules (first match wins): account-standing = error matches",
+              "`access denied|account|insufficient|forbidden`; transport =",
+              "`connection|timed out|timeout|disconnect|apiconnectionerror|",
+              "internal server error|server error|50[23]`; everything else",
+              "falls into other.", "",
+              "| Class | programs |", "|---|---:|"]
+    for cls in ("account-standing", "transport", "other", "no-ledger-error"):
+        if classes.get(cls):
+            lines.append(f"| {cls} | {classes[cls]} |")
+    lines += ["", "Example error per class:", ""]
+    for cls, ex in examples.items():
+        lines.append(f"- {cls}: `{ex}`")
+    lines.append("")
     out = RES / "healfail_report.md"
     out.write_text("\n".join(lines) + "\n")
     print(f"cells with failures: {len(rows)}  total_failed={tot_all}  "

@@ -173,7 +173,13 @@ def main() -> None:
     def desc(v):
         return (f"mean {np.mean(v):,.0f}; std {np.std(v, ddof=1):,.0f}; "
                 f"median {np.median(v):,.0f}; q25 {np.percentile(v,25):,.0f}; "
-                f"q75 {np.percentile(v,75):,.0f}; max {np.max(v):,.0f}")
+                f"q75 {np.percentile(v,75):,.0f}; "
+                f"p99 {np.percentile(v,99):,.0f}; max {np.max(v):,.0f}")
+
+    med_ratio = np.median(th_all) / np.median(nt_all)
+    p75_ratio = np.percentile(th_all, 75) / np.percentile(nt_all, 75)
+    p90_ratio = np.percentile(th_all, 90) / np.percentile(nt_all, 90)
+    p99_ratio = np.percentile(th_all, 99) / np.percentile(nt_all, 99)
 
     L = ["# Tokens per problem: thinking vs non-thinking (histogram analysis)", "",
          "Unit = problem; total tokens = generation + repair, summed over",
@@ -186,7 +192,7 @@ def main() -> None:
          "## Distribution summary", "",
          f"- Non-thinking: {desc(nt_all)}",
          f"- Thinking:     {desc(th_all)}",
-         f"- Thinking median is {np.median(th_all)/np.median(nt_all):.2f}x the",
+         f"- Thinking median is {med_ratio:.2f}x the",
          f"  non-thinking median; means {np.mean(th_all)/np.mean(nt_all):.2f}x.",
          "", "## Per-model medians (tokens/problem) and passes", "",
          "| Model | non-thinking median | thinking median | ratio | pass nt -> th |",
@@ -197,21 +203,26 @@ def main() -> None:
     nt_passes = sum(passes(b, MAIN, subset_pids(th)) for b, th, _ in PAIRS)
     th_passes = sum(passes(th, SUB) for b, th, _ in PAIRS)
     marg = (th_all.sum() - nt_all.sum()) / (th_passes - nt_passes)
+    pp = 100.0 * (th_passes - nt_passes) / 3000  # 5 models x 600 programs
     L += ["",
           "## Reading",
           "",
           "- Both distributions are heavy right-tailed: most problems cost",
           "  little; a tail of never-repaired problems absorbs the budget.",
-          "- Thinking shifts the WHOLE distribution right: median 2.6x,",
-          "  p75 1.5x, p90 1.3x, p99 3.6x -- and STRETCHES the upper tail:",
-          f"  {int((th_all>100_000).sum())} problems exceed 100k tokens",
+          "- Thinking shifts the WHOLE distribution right: median "
+          f"{med_ratio:.1f}x, p75 {p75_ratio:.1f}x, p90 {p90_ratio:.1f}x,",
+          f"  p99 {p99_ratio:.1f}x (p99 {np.percentile(nt_all,99):,.0f} -> "
+          f"{np.percentile(th_all,99):,.0f} tokens) -- and STRETCHES the",
+          f"  upper tail: {int((th_all>100_000).sum())} problems exceed "
+          "100k tokens",
           f" (vs {int((nt_all>100_000).sum())} non-thinking); the worst case",
           "  reaches 1.03M tokens (a GLM-5.1 reasoning loop). Thinking",
           "  buys passes but also multiplies the cost of the problems it",
           "  still fails on.",
           f"- Totals: {th_all.sum():,.0f} vs {nt_all.sum():,.0f} tokens",
-          f" (1.88x) for +{th_passes-nt_passes} passed programs of 3,000",
-          f" (+7.6pp pooled): ~{marg:,.0f} tokens per additional passed",
+          f" ({np.mean(th_all)/np.mean(nt_all):.2f}x) for "
+          f"+{th_passes-nt_passes} passed programs of 3,000",
+          f" (+{pp:.1f}pp pooled): ~{marg:,.0f} tokens per additional passed",
           "  program.",
           "- Per model, the generation phase multiplies tokens by 1.7x",
           "  (Gemini) to 13x (DeepSeek) under thinking, while mean repair",

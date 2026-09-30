@@ -10,8 +10,8 @@ results/thinking_tokens_hist.pdf.
 
 ## Distribution summary
 
-- Non-thinking: mean 19,196; std 25,023; median 6,464; q25 2,758; q75 27,968; max 149,383
-- Thinking:     mean 36,076; std 72,192; median 17,027; q25 7,920; q75 40,820; max 1,025,103
+- Non-thinking: mean 19,196; std 25,023; median 6,464; q25 2,758; q75 27,968; p99 115,514; max 149,383
+- Thinking:     mean 36,076; std 72,192; median 17,027; q25 7,920; q75 40,820; p99 418,546; max 1,025,103
 - Thinking median is 2.63x the
   non-thinking median; means 1.88x.
 
@@ -29,16 +29,16 @@ results/thinking_tokens_hist.pdf.
 
 - Both distributions are heavy right-tailed: most problems cost
   little; a tail of never-repaired problems absorbs the budget.
-- Thinking shifts the WHOLE distribution right: median 2.6x,
-  p75 1.5x, p90 1.3x, p99 3.6x -- and STRETCHES the upper tail:
-  53 problems exceed 100k tokens
+- Thinking shifts the WHOLE distribution right: median 2.6x, p75 1.5x, p90 1.3x,
+  p99 3.6x (p99 115,514 -> 418,546 tokens) -- and STRETCHES the
+  upper tail: 53 problems exceed 100k tokens
  (vs 15 non-thinking); the worst case
   reaches 1.03M tokens (a GLM-5.1 reasoning loop). Thinking
   buys passes but also multiplies the cost of the problems it
   still fails on.
 - Totals: 36,076,199 vs 19,196,120 tokens
  (1.88x) for +429 passed programs of 3,000
- (+7.6pp pooled): ~39,348 tokens per additional passed
+ (+14.3pp pooled): ~39,348 tokens per additional passed
   program.
 - Per model, the generation phase multiplies tokens by 1.7x
   (Gemini) to 13x (DeepSeek) under thinking, while mean repair

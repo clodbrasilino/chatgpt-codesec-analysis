@@ -39,7 +39,7 @@ CAP = max_healing_rounds()
 
 def scan(model: str) -> dict[str, dict]:
     """Union of channel states over heal_0 and heal_N/healed for N <= CAP."""
-    cell = REPO / "collected_code_6" / model / SLUG
+    cell = REPO / "data" / "collected_code_6" / model / SLUG
     dirs: list[tuple[str, Path]] = [("heal_0", cell / "heal_0")]
     for d in sorted(cell.glob("heal_*")):
         m = re.fullmatch(r"heal_(\d+)", d.name)
